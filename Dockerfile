@@ -1,4 +1,4 @@
-#FROM php:7.0-fpm
+FROM php:7.1-fpm
 FROM php:5.6-fpm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
@@ -10,7 +10,6 @@ RUN apt-get update
 RUN apt-get install -y -q --no-install-recommends \
 		git \
 		ssmtp \
-		php5-mysql \
 		mysql-client \
 		curl \
 		imagemagick \
@@ -19,7 +18,7 @@ RUN apt-get install -y -q --no-install-recommends \
 		
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql mysql zip gmp
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql zip gmp
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -35,5 +34,5 @@ RUN echo "FromLineOverride=YES\nmailhub=smtp\n" > /etc/ssmtp/ssmtp.conf
 
 COPY ssmtp.conf /usr/local/etc/php/conf.d/mail.ini
 
-#ARG wwwdatauid=1000
-#RUN usermod -u $wwwdatauid www-data
+ARG wwwdatauid=1000
+RUN usermod -u $wwwdatauid www-data
