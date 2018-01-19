@@ -1,5 +1,5 @@
 FROM php:7.1-fpm
-FROM php:5.6-fpm
+#FROM php:5.6-fpm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -18,7 +18,7 @@ RUN apt-get install -y -q --no-install-recommends \
 		
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql zip gmp
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql zip gmp mysqli
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
