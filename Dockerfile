@@ -10,7 +10,7 @@ RUN apt-get update
 RUN apt-get install -y -q --no-install-recommends \
 		git \
 		ssmtp \
-		php5-mysql \
+#		php5-mysql \
 		mysql-client \
 		curl \
 		imagemagick \
