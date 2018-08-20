@@ -15,11 +15,13 @@ RUN apt-get install -y -q --no-install-recommends \
 		imagemagick \
 		zlib1g-dev \
 		libpng-dev \
-		libgmp-dev
+		libgmp-dev \
+		libjpeg62-turbo-dev \
+		libfreetype6-dev
 		
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql zip gmp mysqli gd
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
