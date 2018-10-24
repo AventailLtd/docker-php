@@ -1,5 +1,4 @@
-FROM php:7.1-fpm
-#FROM php:5.6-fpm
+FROM php:7.2-fpm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
