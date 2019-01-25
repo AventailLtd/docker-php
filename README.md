@@ -1,8 +1,24 @@
+For xdebug set env PHPSTORM_IP_ADDRESS
 
+docker-compose.yml
 
 ```
-docker build -t dblaci/php-fpm:5.6-v1 .
+  php:
+    image: dblaci/nginx-php-dev:7.2-20190125
+    environment:
+      XDEBUG_CONFIG: remote_host=${PHPSTORM_IP_ADDRESS}
+    expose:
+      - 9000
+    volumes:
+      - "${PROJECT_ROOT}:/var/www/html"
+    networks:
+      - database
+      - server
+```
+
+```
+docker build -t dblaci/nginx-php-dev:temp .
 docker login
 ...
-docker push dblaci/php-fpm:5.6-v1
+docker push dblaci/nginx-php-dev:7.2-20190125
 ```
