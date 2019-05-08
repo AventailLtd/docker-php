@@ -4,7 +4,7 @@ docker-compose.yml
 
 ```
   php:
-    image: dblaci/nginx-php-dev:7.2-20190125
+    image: dblaci/nginx-php-dev:7.3-20190508
     environment:
       XDEBUG_CONFIG: remote_host=${PHPSTORM_IP_ADDRESS}
     expose:
@@ -20,5 +20,5 @@ docker-compose.yml
 docker build -t dblaci/nginx-php-dev:temp .
 docker login
 ...
-docker push dblaci/nginx-php-dev:7.2-20190125
+docker push dblaci/nginx-php-dev:7.3-20190508
 ```
