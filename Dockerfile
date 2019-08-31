@@ -15,6 +15,7 @@ RUN apt-get install -y -q --no-install-recommends \
 		curl \
 		imagemagick \
 		zlib1g-dev \
+                libpng-dev libjpeg-dev \
 		libgmp-dev
 		
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
