@@ -19,7 +19,7 @@ RUN apt-get install -y -q --no-install-recommends \
 		
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql mysql zip gmp
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-install -j3 pdo_mysql mysql zip gmp gd
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
