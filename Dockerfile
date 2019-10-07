@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.3.5-fpm
+FROM php:7.3.10-fpm-stretch
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -22,7 +22,8 @@ RUN apt-get install -y -q --no-install-recommends \
 		libxml2-dev
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
