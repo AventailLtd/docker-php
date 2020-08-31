@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.3.18-fpm-stretch
+FROM php:7.4.9-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -13,8 +13,8 @@ RUN apt-get install -y -q --no-install-recommends \
 		less \
 		pv \
 		git \
-		ssmtp \
-		mysql-client \
+		msmtp \
+		default-mysql-client \
 		curl \
 		imagemagick \
 		zlib1g-dev \
@@ -26,7 +26,7 @@ RUN apt-get install -y -q --no-install-recommends \
 		libxml2-dev
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -45,7 +45,7 @@ RUN pecl install xdebug \
 #AuthMethod=LOGIN\n\
 #UseTLS=YES\n\
 #UseSTARTTLS=YES\n" > /etc/ssmtp/ssmtp.conf
-RUN echo "FromLineOverride=YES\nmailhub=smtp\n" > /etc/ssmtp/ssmtp.conf
+RUN echo "host smtp\nport 25\n" > /etc/msmtprc
 
 COPY ssmtp.conf /usr/local/etc/php/conf.d/mail.ini
 
