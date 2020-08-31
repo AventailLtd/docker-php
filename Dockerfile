@@ -45,7 +45,7 @@ RUN pecl install xdebug \
 #AuthMethod=LOGIN\n\
 #UseTLS=YES\n\
 #UseSTARTTLS=YES\n" > /etc/ssmtp/ssmtp.conf
-RUN echo "host smtp\nport 25\nadd_missing_from_header on\nfrom \"<dev@dblaci.hu>\"\n" > /etc/msmtprc
+RUN echo "host smtp\nport 25\nadd_missing_from_header on\nfrom dev@dblaci.hu\n" > /etc/msmtprc
 
 COPY msmtp.conf /usr/local/etc/php/conf.d/mail.ini
 
