@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.10-fpm-buster
+FROM php:7.4.11-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -28,7 +28,7 @@ RUN apt-get install -y -q --no-install-recommends \
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
-    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl
+    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
