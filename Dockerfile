@@ -24,11 +24,12 @@ RUN apt-get install -y -q --no-install-recommends \
 		libfreetype6-dev \
 		libzip-dev \
 		libxml2-dev \
+		libldap-dev \
 		openssh-client
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
-    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath
+    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
