@@ -1,35 +1,49 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.11-fpm-buster
+FROM php:7.4.13-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
 
 ENV DEBIAN_FRONTEND noninteractive
+# mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
+ENV ACCEPT_EULA Y
 
-RUN apt-get update
+RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
+
+# sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update
+
 RUN apt-get install -y -q --no-install-recommends \
-                ffmpeg \
-		rsync \
-		less \
-		pv \
-		git \
-		msmtp \
-		default-mysql-client \
-		curl \
-		imagemagick \
-		zlib1g-dev \
-		libpng-dev \
-		libgmp-dev \
-		libjpeg62-turbo-dev \
-		libfreetype6-dev \
-		libzip-dev \
-		libxml2-dev \
-		libldap-dev \
-		openssh-client
+    ffmpeg \
+    rsync \
+    less \
+    pv \
+    git \
+    msmtp \
+    default-mysql-client \
+    curl \
+    imagemagick \
+    zlib1g-dev \
+    libpng-dev \
+    libgmp-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libxml2-dev \
+    libldap-dev \
+    unixodbc-dev \
+    msodbcsql17 \
+    openssh-client
 RUN apt-get clean && rm -r /var/lib/apt/lists/*
+
+RUN pecl install sqlsrv pdo_sqlsrv
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap
+
+RUN docker-php-ext-enable sqlsrv pdo_sqlsrv
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
