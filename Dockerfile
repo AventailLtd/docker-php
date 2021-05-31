@@ -47,7 +47,7 @@ ENV LC_ALL=en_US.UTF-8
 RUN pecl install sqlsrv pdo_sqlsrv redis && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
-    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap
+    docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl
 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis
 
