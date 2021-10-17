@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.19-fpm-buster
+FROM php:7.4.24-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -31,6 +31,7 @@ RUN apt-get install -y -q --no-install-recommends \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libzip-dev \
+    libmagickwand-dev \
     libxml2-dev \
     libldap-dev \
     unixodbc-dev \
@@ -44,7 +45,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean &&
 ENV LC_ALL=en_US.UTF-8
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pdo_sqlsrv redis && rm -rf /tmp/pear
+RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-install -j3 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl
