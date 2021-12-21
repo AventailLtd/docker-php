@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.26-fpm-buster
+FROM php:7.4.27-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
 ENV ACCEPT_EULA Y
 
+# for apt-key to work!
 RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
@@ -16,6 +17,10 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     apt-get update
 
 RUN apt-get install -y -q --no-install-recommends \
+    cron \
+    nano \
+    procps \
+    iputils-ping \
     ffmpeg \
     rsync \
     less \
