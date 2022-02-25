@@ -42,7 +42,8 @@ RUN apt-get install -y -q --no-install-recommends \
     unixodbc-dev \
     msodbcsql17 \
     openssh-client \
-    locales
+    locales \
+    libfcgi-bin
 
 # https://stackoverflow.com/questions/27931668/encoding-problems-when-running-an-app-in-docker-python-java-ruby-with-u/27931669
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean && rm -r /var/lib/apt/lists/*
@@ -87,3 +88,9 @@ RUN chown 1000:1000 /var/www
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 COPY check_env.sh /usr/local/bin/check_env.sh
+
+# Enable php fpm status page
+RUN echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.conf
+
+# Copy healtcheck script
+COPY ./php-fpm-healthcheck /usr/local/bin/
