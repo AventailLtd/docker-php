@@ -39,6 +39,7 @@ RUN apt-get install -y -q --no-install-recommends \
     libmagickwand-dev \
     libxml2-dev \
     libldap-dev \
+    libpq-dev \
     unixodbc-dev \
     msodbcsql17 \
     openssh-client \
