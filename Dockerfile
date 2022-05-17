@@ -56,7 +56,7 @@ RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install -j5 iconv pdo_mysql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
+    docker-php-ext-install -j5 iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
 
