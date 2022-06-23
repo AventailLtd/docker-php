@@ -1,8 +1,11 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.28-fpm-buster
+FROM php:7.4.30-fpm-buster
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
+
+# Disable access logs.
+RUN echo "access.log = /dev/null" >> /usr/local/etc/php-fpm.d/www.conf
 
 ENV DEBIAN_FRONTEND noninteractive
 # mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
