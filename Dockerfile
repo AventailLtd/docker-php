@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.30-fpm-buster
+FROM php:8.2.1-fpm-bullseye
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -15,8 +15,9 @@ ENV ACCEPT_EULA Y
 RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
+# msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update
 
 RUN apt-get install -y -q --no-install-recommends \
@@ -44,7 +45,7 @@ RUN apt-get install -y -q --no-install-recommends \
     libldap-dev \
     libpq-dev \
     unixodbc-dev \
-    msodbcsql17 \
+    msodbcsql18 \
     openssh-client \
     locales \
     libfcgi-bin
