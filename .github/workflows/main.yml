@@ -54,10 +54,23 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
-        name: Build and push
+        # We want the amd64 architecture to be ready quickly.
+        # For this reason, we only build and push it first.
+        name: Build and push (AMD64)
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: 'linux/amd64'
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      -
+        # We will also make ARM64 in the next build. The build time is much slower because of QEMU.
+        name: Build and push (AMD64,ARM64)
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: 'linux/amd64,linux/arm64'
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
