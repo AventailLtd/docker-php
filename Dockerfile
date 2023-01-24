@@ -48,7 +48,16 @@ RUN apt-get install -y -q --no-install-recommends \
     msodbcsql18 \
     openssh-client \
     locales \
-    libfcgi-bin
+    libfcgi-bin \
+    wget
+
+# ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
+RUN echo "deb https://www.deb-multimedia.org bullseye main non-free" >> /etc/apt/sources.list
+RUN wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb
+RUN dpkg -i deb-multimedia-keyring_2016.8.1_all.deb
+RUN rm deb-multimedia-keyring_2016.8.1_all.deb
+RUN apt update
+RUN apt install -y ffmpeg
 
 # https://stackoverflow.com/questions/27931668/encoding-problems-when-running-an-app-in-docker-python-java-ruby-with-u/27931669
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean && rm -r /var/lib/apt/lists/*
