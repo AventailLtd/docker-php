@@ -1,0 +1,21 @@
+# https://github.com/microsoft/linux-package-repositories/issues/39#issuecomment-1431791428
+
+Package: unixodbc
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 100
+
+Package: unixodbc-dev
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 100
+
+Package: libodbc1:amd64
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 100
+
+Package: odbcinst
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 100
+
+Package: odbcinst1debian2:amd64
+Pin: origin "packages.microsoft.com"
+Pin-Priority: 100
