@@ -43,6 +43,7 @@ RUN apt-get install -y -q --no-install-recommends \
     libmagickwand-dev \
     libxml2-dev \
     libldap-dev \
+    libltdl-dev \
     libpq-dev \
     unixodbc-dev \
     msodbcsql18 \
@@ -66,14 +67,20 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean &&
 ENV LC_ALL=en_US.UTF-8
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
+# TODO: nem működik: https://github.com/microsoft/linux-package-repositories/issues/39#issuecomment-1448337968
+# átmenetileg az sqlsrv kikapcsolva!
+#RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
+RUN pecl install redis imagick && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install -j5 iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
 
-RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
+# TODO: nem működik: https://github.com/microsoft/linux-package-repositories/issues/39#issuecomment-1448337968
+# átmenetileg az sqlsrv kikapcsolva!
+#RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
+RUN docker-php-ext-enable redis imagick
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
