@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.2.1-fpm-bullseye
+FROM php:8.2.3-fpm-bullseye
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -49,6 +49,7 @@ RUN apt-get install -y -q --no-install-recommends \
     openssh-client \
     locales \
     libfcgi-bin \
+    strace \
     wget
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
