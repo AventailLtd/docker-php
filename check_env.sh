@@ -7,15 +7,6 @@ fi
 
 if [ "${PHP_PRODUCTION}" == "1" ]; then
     mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-else
+elif [ "${PHP_PRODUCTION}" == "0" ]; then
     mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 fi
-
-set -e
-
-# first arg is `-f` or `--some-option`
-if [ "${1#-}" != "$1" ]; then
-        set -- php-fpm "$@"
-fi
-
-exec "$@"

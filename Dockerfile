@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.2.3-fpm-bullseye
+FROM php:8.2.11-fpm-bullseye
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -24,7 +24,10 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update
 
+# gosu: run final command as www-data if needed
+
 RUN apt-get install -y -q --no-install-recommends \
+    gosu \
     cron \
     nano \
     procps \
@@ -104,7 +107,7 @@ ARG wwwdatauid=1000
 RUN usermod -u $wwwdatauid www-data
 
 # for componser cache
-RUN chown 1000:1000 /var/www
+RUN chown $wwwdataid:$wwwdatauid /var/www
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 COPY check_env.sh /usr/local/bin/check_env.sh
