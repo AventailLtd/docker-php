@@ -1,8 +1,12 @@
 #!/bin/sh
 
-set -e
+if [ "$(id -u)" = "0" ]; then
+  # this script can run only as run. no need to echo warnings if not.
+  /usr/local/bin/check_env.sh
+fi
 
-/usr/local/bin/check_env.sh
+# fail on error - after the check ran
+set -e
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
