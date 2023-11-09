@@ -43,6 +43,7 @@ RUN apt-get install -y -q --no-install-recommends \
     imagemagick \
     zlib1g-dev \
     libpng-dev \
+    libwebp-dev \
     libgmp-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
@@ -77,7 +78,11 @@ ENV LC_ALL=en_US.UTF-8
 RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
-    docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+    docker-php-ext-configure gd \
+      --with-freetype=/usr/include/ \
+      --with-jpeg=/usr/include/ \
+      --with-webp=/usr/include/ \
+     && \
     docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install -j5 iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
 
