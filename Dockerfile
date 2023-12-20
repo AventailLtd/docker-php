@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.2.12-fpm-bullseye
+FROM php:8.2.13-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -62,7 +62,7 @@ RUN apt-get install -y -q --no-install-recommends \
     wget
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
-RUN echo "deb https://www.deb-multimedia.org bullseye main non-free" >> /etc/apt/sources.list
+RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list
 RUN wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb
 RUN dpkg -i deb-multimedia-keyring_2016.8.1_all.deb
 RUN rm deb-multimedia-keyring_2016.8.1_all.deb
