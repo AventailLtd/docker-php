@@ -1,5 +1,6 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.2.13-fpm-bookworm
+#FROM php:8.3.2-fpm-bookworm - még nem megy 2024-01-30
+FROM php:8.2.15-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -112,7 +113,7 @@ ARG wwwdatauid=1000
 RUN usermod -u $wwwdatauid www-data
 
 # for componser cache
-RUN chown $wwwdataid:$wwwdatauid /var/www
+RUN chown $wwwdatauid:$wwwdatauid /var/www
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 COPY check_env.sh /usr/local/bin/check_env.sh

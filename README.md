@@ -39,3 +39,6 @@ docker login
 ...
 docker push aventailltd/docker-php:7.4-20211210
 ```
+
+
+TODO: php8.3 2024-01-12: https://github.com/Imagick/imagick/pull/641
