@@ -1,6 +1,6 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
 #FROM php:8.3.2-fpm-bookworm - még nem megy 2024-01-30
-FROM php:8.2.15-fpm-bookworm
+FROM php:8.2.16-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -85,7 +85,7 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
       --with-webp=/usr/include/ \
      && \
     docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install -j5 iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
+    docker-php-ext-install -j5 ftp iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
 
