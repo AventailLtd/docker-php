@@ -1,0 +1,5 @@
+extension=pcov.so
+pcov.enabled=1
+memory_limit=512M
+pcov.directory="/var/www/html"
+pcov.exclude="#/(assets|_bin|crontabs|_doc|_docker|helm.DEPRECATED|_lib|node_modules|openapi|public|scss|src_admin|src_new|src_service|templates|tests|vue|webpack_config)/#"
