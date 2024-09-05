@@ -3,7 +3,12 @@
 # Note: this file is only reasonable with the php-fpm, not the docker run/docker exec mode. So it is running only if the user is root!
 
 if [ "${XDEBUG_ENABLE}" == "1" ]; then
-  mv /usr/local/etc/php/conf.d/xdebug.ini.disable /usr/local/etc/php/conf.d/xdebug.ini
+    mv /usr/local/etc/php/conf.d/xdebug.ini.disabled /usr/local/etc/php/conf.d/xdebug.ini
+fi
+
+# for code coverage
+if [[ "${PCOV_ENABLE}" == "1" ]]; then
+    mv /usr/local/etc/php/conf.d/pcov.ini.disabled /usr/local/etc/php/conf.d/pcov.ini
 fi
 
 if [ "${PHP_PRODUCTION}" == "1" ]; then
