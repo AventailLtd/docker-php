@@ -23,45 +23,47 @@ COPY pcov.ini.disabled /usr/local/etc/php/conf.d/pcov.ini.disabled
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
 # msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-#   && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-    && curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-    && apt-get update \
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+#    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update \
+
+# gosu: run final command as www-data if needed
+
     && apt-get install -y -q --no-install-recommends \
-        # gosu: run final command as www-data if needed
-        gosu \
-        cron \
-        nano \
-        procps \
-        iputils-ping \
-        ffmpeg \
-        rsync \
-        less \
-        pv \
-        git \
-        msmtp \
-        default-mysql-client \
-        curl \
-        imagemagick \
-        zlib1g-dev \
-        libpng-dev \
-        libwebp-dev \
-        libgmp-dev \
-        libjpeg62-turbo-dev \
-        libfreetype6-dev \
-        libzip-dev \
-        libmagickwand-dev \
-        libxml2-dev \
-        libldap-dev \
-        libltdl-dev \
-        libpq-dev \
-        unixodbc-dev \
-        msodbcsql18 \
-        openssh-client \
-        locales \
-        libfcgi-bin \
-        strace \
-        wget
+    gosu \
+    cron \
+    nano \
+    procps \
+    iputils-ping \
+    ffmpeg \
+    rsync \
+    less \
+    pv \
+    git \
+    msmtp \
+    default-mysql-client \
+    curl \
+    imagemagick \
+    zlib1g-dev \
+    libpng-dev \
+    libwebp-dev \
+    libgmp-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libmagickwand-dev \
+    libxml2-dev \
+    libldap-dev \
+    libltdl-dev \
+    libpq-dev \
+    unixodbc-dev \
+    msodbcsql18 \
+    openssh-client \
+    locales \
+    libfcgi-bin \
+    strace \
+    wget
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
 RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list \
@@ -79,14 +81,14 @@ ENV LC_ALL=en_US.UTF-8
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
 RUN pecl install sqlsrv pcov pdo_sqlsrv redis imagick && rm -rf /tmp/pear
 
-RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h \
-    && docker-php-ext-configure gd \
-        --with-freetype=/usr/include/ \
-        --with-jpeg=/usr/include/ \
-        --with-webp=/usr/include/ \
-    \
-    && docker-php-ext-configure opcache --enable-opcache \
-    && docker-php-ext-install -j5 ftp iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
+RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
+    docker-php-ext-configure gd \
+      --with-freetype=/usr/include/ \
+      --with-jpeg=/usr/include/ \
+      --with-webp=/usr/include/ \
+     && \
+    docker-php-ext-configure opcache --enable-opcache && \
+    docker-php-ext-install -j5 ftp iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
 
