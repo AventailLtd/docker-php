@@ -15,6 +15,3 @@ if [ "${PHP_PRODUCTION}" == "1" ]; then
 elif [ "${PHP_PRODUCTION}" == "0" ]; then
     mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 fi
-
-# Idempotence: This setup can only be run once.
-touch /opt/.setup.done
