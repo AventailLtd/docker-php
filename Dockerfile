@@ -120,7 +120,7 @@ RUN usermod -u "$wwwdatauid" www-data
 RUN chown "$wwwdatauid":"$wwwdatauid" /var/www
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
-COPY check_env.sh /usr/local/bin/check_env.sh
+COPY setup.sh /usr/local/bin/setup.sh
 
 # Enable php fpm status page
 RUN echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.conf

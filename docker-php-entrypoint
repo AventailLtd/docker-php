@@ -1,8 +1,9 @@
 #!/bin/sh
 
-if [ "$(id -u)" = "0" ]; then
-  # this script can run only as run. no need to echo warnings if not.
-  /usr/local/bin/check_env.sh
+if [ "$(id -u)" = "0" ] && ! [ -e /opt/.setup.done ]; then
+  # this script can run only as root and can only be run once.
+  # No need to echo warnings if not.
+  /usr/local/bin/setup.sh
 fi
 
 # fail on error - after the check ran
