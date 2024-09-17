@@ -63,7 +63,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     locales \
     libfcgi-bin \
     strace \
-    wget
+    wget \
+    7zip
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
 RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list \
@@ -119,7 +120,7 @@ RUN usermod -u "$wwwdatauid" www-data
 RUN chown "$wwwdatauid":"$wwwdatauid" /var/www
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
-COPY check_env.sh /usr/local/bin/check_env.sh
+COPY setup.sh /usr/local/bin/setup.sh
 
 # Enable php fpm status page
 RUN echo "pm.status_path = /status" >> /usr/local/etc/php-fpm.conf
