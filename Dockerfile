@@ -63,7 +63,8 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     locales \
     libfcgi-bin \
     strace \
-    wget
+    wget \
+    7zip
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
 RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list \

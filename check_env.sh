@@ -3,11 +3,17 @@
 # Note: this file is only reasonable with the php-fpm, not the docker run/docker exec mode. So it is running only if the user is root!
 
 if [ "${XDEBUG_ENABLE}" == "1" ]; then
-    mv /usr/local/etc/php/conf.d/xdebug.ini.disabled /usr/local/etc/php/conf.d/xdebug.ini
+    # Idempotence: Check whether the file has been moved already
+    [ -e /usr/local/etc/php/conf.d/xdebug.ini ] \
+      || mv /usr/local/etc/php/conf.d/xdebug.ini.disabled /usr/local/etc/php/conf.d/xdebug.ini
 fi
 
 if [ "${PCOV_ENABLE}" == "1" ]; then
-    mv /usr/local/etc/php/conf.d/pcov.ini.disabled /usr/local/etc/php/conf.d/pcov.ini
+    # Idempotence: Check whether the file has been moved already, so that the
+    # after_script part of the pipeline doesn't fail, due to not finding the
+    # old disabled file.
+    [ -e /usr/local/etc/php/conf.d/pcov.ini ] \
+      || mv /usr/local/etc/php/conf.d/pcov.ini.disabled /usr/local/etc/php/conf.d/pcov.ini
 fi
 
 if [ "${PHP_PRODUCTION}" == "1" ]; then
