@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:7.4.30-fpm-buster
+FROM php:7.4.33-fpm-bullseye
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -16,9 +16,10 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update
 
+# a libltdl-dev a pecl sqlsrv buildhez kell
 RUN apt-get install -y -q --no-install-recommends \
     cron \
     nano \
@@ -43,19 +44,31 @@ RUN apt-get install -y -q --no-install-recommends \
     libxml2-dev \
     libldap-dev \
     libpq-dev \
+    libltdl-dev \
     unixodbc-dev \
-    msodbcsql17 \
+    msodbcsql18 \
+    mssql-tools \
+    odbcinst \
     openssh-client \
     locales \
     libfcgi-bin
 
+
 # https://stackoverflow.com/questions/27931668/encoding-problems-when-running-an-app-in-docker-python-java-ruby-with-u/27931669
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean && rm -r /var/lib/apt/lists/*
+
+# prestashop elvárja, hogy legyen sendmail command ilyen címen.
+RUN ln -s /usr/bin/msmtp /usr/sbin/sendmail
 
 ENV LC_ALL=en_US.UTF-8
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pdo_sqlsrv redis imagick && rm -rf /tmp/pear
+RUN pecl install redis imagick
+
+# libltdl.la hiányára workaround
+#RUN ln -s /usr/lib/x86_64-linux-gnu/libltdl.so /usr/lib/x86_64-linux-gnu/libltdl.la
+
+RUN pecl install sqlsrv-5.10.1 pdo_sqlsrv-5.10.1 && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
@@ -66,7 +79,7 @@ RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN pecl install xdebug \
+RUN pecl install xdebug-3.1.6 \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini.disabled \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini.disabled \
     && echo "xdebug.default_enable=0" >> /usr/local/etc/php/conf.d/xdebug.ini.disabled \
