@@ -1,6 +1,6 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
 #FROM php:8.3.2-fpm-bookworm - még nem megy 2024-01-30
-FROM php:8.2.23-fpm-bookworm
+FROM php:8.2.27-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 COPY mssql_pin /etc/apt/preferences.d/microsoft
 
 # pcov.ini
-COPY pcov.ini.disabled /usr/local/etc/php/conf.d/pcov.ini.disabled
+COPY pcov.ini /usr/local/etc/php/conf.d/pcov.ini.disabled
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
 # msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
