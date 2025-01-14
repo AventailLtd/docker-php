@@ -1,6 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-#FROM php:8.3.2-fpm-bookworm - még nem megy 2024-01-30
-FROM php:8.2.27-fpm-bookworm
+FROM php:8.4.2-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
