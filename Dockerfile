@@ -78,8 +78,15 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean &&
 
 ENV LC_ALL=en_US.UTF-8
 
+ADD --chmod=0755 \
+  https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.13/install-php-extensions \
+  /usr/local/bin/
+# TODO: Use latest released version, after https://github.com/Imagick/imagick/issues/640 is fixed
+# TODO: If the issue is fixed, then the imagick extension can be installed with "RUN pecl imagick", install-php-extensions is not needed.
+RUN install-php-extensions imagick/imagick@28f27044e435a2b203e32675e942eb8de620ee58
+
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pcov pdo_sqlsrv redis imagick && rm -rf /tmp/pear
+RUN pecl install sqlsrv pcov pdo_sqlsrv redis && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd \
