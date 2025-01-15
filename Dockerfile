@@ -83,7 +83,7 @@ ADD --chmod=0755 \
   /usr/local/bin/
 # TODO: Use latest released version, after https://github.com/Imagick/imagick/issues/640 is fixed
 # TODO: If the issue is fixed, then the imagick extension can be installed with "RUN pecl imagick", install-php-extensions is not needed.
-RUN install-php-extensions imagick/imagick@28f27044e435a2b203e32675e942eb8de620ee58
+RUN install-php-extensions imagick/imagick@ef495c0b8fd0691d6571de8a5f72a23529d30a24
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
 RUN pecl install sqlsrv pcov pdo_sqlsrv redis && rm -rf /tmp/pear
