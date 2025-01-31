@@ -17,9 +17,6 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 # temporary
 COPY mssql_pin /etc/apt/preferences.d/microsoft
 
-# pcov.ini
-COPY pcov.ini /usr/local/etc/php/conf.d/pcov.ini.disabled
-
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
 # msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
