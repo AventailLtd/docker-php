@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2f87bcc6-ed71-42ce-a610-796bce0ed659" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pcov.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/setup.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +65,7 @@
       <workItem from="1674825542431" duration="599000" />
       <workItem from="1675062039225" duration="2474000" />
       <workItem from="1736865951892" duration="1813000" />
-      <workItem from="1738328633318" duration="807000" />
+      <workItem from="1738328633318" duration="3573000" />
     </task>
     <servers />
   </component>
