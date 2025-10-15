@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.3-fpm-bookworm
+FROM php:8.4.13-fpm-trixie
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -19,9 +19,23 @@ COPY mssql_pin /etc/apt/preferences.d/microsoft
 
 # sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
 # msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-#    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-    curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+#RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+#RUN mkdir -p /etc/apt/keyrings \
+# && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+#    -o /etc/apt/keyrings/microsoft.gpg \
+# && chmod 644 /etc/apt/keyrings/microsoft.gpg && \
+#    curl https://packages.microsoft.com/config/debian/13/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+#    curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+#    apt-get update \
+
+
+# Microsoft repository setup (Trixie / Debian 13)
+RUN set -eux; \
+    mkdir -p /etc/apt/keyrings; \
+    # Note: 13-as (Trixie) nincs még!)
+    curl -fsSL https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -o /tmp/packages-microsoft-prod.deb; \
+    dpkg -i /tmp/packages-microsoft-prod.deb; \
+    rm /tmp/packages-microsoft-prod.deb; \
     apt-get update \
 
 # gosu: run final command as www-data if needed
@@ -60,13 +74,14 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     libfcgi-bin \
     strace \
     wget \
+    gpgv # for deb-multimedia keyring \
     7zip
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
-RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list \
-    && wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb \
-    && dpkg -i deb-multimedia-keyring_2016.8.1_all.deb \
-    && rm deb-multimedia-keyring_2016.8.1_all.deb \
+RUN echo "deb https://www.deb-multimedia.org trixie main non-free" >> /etc/apt/sources.list \
+    && wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb \
+    && dpkg -i deb-multimedia-keyring_2024.9.1_all.deb \
+    && rm deb-multimedia-keyring_2024.9.1_all.deb \
     && apt update \
     && apt install -y ffmpeg
 
@@ -75,15 +90,15 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean &&
 
 ENV LC_ALL=en_US.UTF-8
 
-ADD --chmod=0755 \
-  https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.13/install-php-extensions \
-  /usr/local/bin/
-# TODO: Use latest released version, after https://github.com/Imagick/imagick/issues/640 is fixed
-# TODO: If the issue is fixed, then the imagick extension can be installed with "RUN pecl imagick", install-php-extensions is not needed.
-RUN install-php-extensions imagick/imagick@ef495c0b8fd0691d6571de8a5f72a23529d30a24
+#ADD --chmod=0755 \
+#  https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.13/install-php-extensions \
+#  /usr/local/bin/
+## TODO: Use latest released version, after https://github.com/Imagick/imagick/issues/640 is fixed
+## TODO: If the issue is fixed, then the imagick extension can be installed with "RUN pecl imagick", install-php-extensions is not needed.
+#RUN install-php-extensions imagick/imagick@ef495c0b8fd0691d6571de8a5f72a23529d30a24
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pcov pdo_sqlsrv redis && rm -rf /tmp/pear
+RUN pecl install imagick sqlsrv pcov pdo_sqlsrv redis && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd \
