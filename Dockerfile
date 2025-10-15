@@ -11,23 +11,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
 ENV ACCEPT_EULA Y
 
-# for apt-key to work!
-RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
-
 # temporary
 COPY mssql_pin /etc/apt/preferences.d/microsoft
-
-# sqlsrv - https://laravel-news.com/install-microsoft-sql-drivers-php-7-docker
-# msodbcsql18 - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16#debian18
-#RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-#RUN mkdir -p /etc/apt/keyrings \
-# && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
-#    -o /etc/apt/keyrings/microsoft.gpg \
-# && chmod 644 /etc/apt/keyrings/microsoft.gpg && \
-#    curl https://packages.microsoft.com/config/debian/13/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-#    curl https://packages.microsoft.com/config/ubuntu/22.10/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
-#    apt-get update \
-
 
 # Microsoft repository setup (Trixie / Debian 13)
 RUN set -eux; \
@@ -74,7 +59,8 @@ RUN set -eux; \
     libfcgi-bin \
     strace \
     wget \
-    gpgv # for deb-multimedia keyring \
+    # for deb-multimedia keyring
+    gpgv \
     7zip
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
@@ -89,13 +75,6 @@ RUN echo "deb https://www.deb-multimedia.org trixie main non-free" >> /etc/apt/s
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean && rm -r /var/lib/apt/lists/*
 
 ENV LC_ALL=en_US.UTF-8
-
-#ADD --chmod=0755 \
-#  https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.13/install-php-extensions \
-#  /usr/local/bin/
-## TODO: Use latest released version, after https://github.com/Imagick/imagick/issues/640 is fixed
-## TODO: If the issue is fixed, then the imagick extension can be installed with "RUN pecl imagick", install-php-extensions is not needed.
-#RUN install-php-extensions imagick/imagick@ef495c0b8fd0691d6571de8a5f72a23529d30a24
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
 RUN pecl install imagick sqlsrv pcov pdo_sqlsrv redis && rm -rf /tmp/pear
