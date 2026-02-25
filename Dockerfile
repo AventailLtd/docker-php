@@ -1,5 +1,5 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.16-fpm-trixie
+FROM php:8.4.18-fpm-trixie
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -7,18 +7,19 @@ RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
 # Disable access logs.
 RUN echo "access.log = /dev/null" >> /usr/local/etc/php-fpm.d/www.conf
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 # mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
-ENV ACCEPT_EULA Y
+ENV ACCEPT_EULA=Y
 
 # temporary
 COPY mssql_pin /etc/apt/preferences.d/microsoft
 
 # Microsoft repository setup (Trixie / Debian 13)
 RUN set -eux; \
-    mkdir -p /etc/apt/keyrings; \
-    # Note: 13-as (Trixie) nincs még!)
-    curl -fsSL https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -o /tmp/packages-microsoft-prod.deb; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends curl ca-certificates; \
+    curl -fsSL https://packages.microsoft.com/config/debian/13/packages-microsoft-prod.deb \
+      -o /tmp/packages-microsoft-prod.deb; \
     dpkg -i /tmp/packages-microsoft-prod.deb; \
     rm /tmp/packages-microsoft-prod.deb; \
     apt-get update \
