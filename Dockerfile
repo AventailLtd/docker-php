@@ -1,5 +1,99 @@
+FROM debian:trixie AS ffmpeg-builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+ARG FFMPEG_VERSION=8.1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    autoconf \
+    automake \
+    build-essential \
+    cmake \
+    curl \
+    ca-certificates \
+    git \
+    libaom-dev \
+    libass-dev \
+    libdav1d-dev \
+    libfontconfig-dev \
+    libfreetype6-dev \
+    libfribidi-dev \
+    libharfbuzz-dev \
+    libjxl-dev \
+    libmp3lame-dev \
+    libopenjp2-7-dev \
+    libopus-dev \
+    libssl-dev \
+    libtheora-dev \
+    libvorbis-dev \
+    libvpx-dev \
+    libwebp-dev \
+    libx264-dev \
+    libx265-dev \
+    libxml2-dev \
+    libzimg-dev \
+    nasm \
+    pkg-config \
+    xz-utils \
+    yasm \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL "https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz" -o /tmp/ffmpeg.tar.xz \
+ && mkdir -p /usr/src/ffmpeg \
+ && tar -xJf /tmp/ffmpeg.tar.xz -C /usr/src/ffmpeg --strip-components=1 \
+ && rm /tmp/ffmpeg.tar.xz
+
+WORKDIR /usr/src/ffmpeg
+
+RUN ./configure \
+    --prefix=/usr/local \
+    --disable-doc \
+    --disable-debug \
+    --enable-gpl \
+    --enable-version3 \
+    --enable-shared \
+    --enable-libaom \
+    --enable-libass \
+    --enable-libdav1d \
+    --enable-libfontconfig \
+    --enable-libfreetype \
+    --enable-libfribidi \
+    --enable-libharfbuzz \
+    --enable-libjxl \
+    --enable-libmp3lame \
+    --enable-libopenjpeg \
+    --enable-libopus \
+    --enable-openssl \
+    --enable-libtheora \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libwebp \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-libxml2 \
+    --enable-libzimg \
+ && make -j"$(nproc)" \
+ && make install \
+ && strip /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
+
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.18-fpm-trixie
+FROM php:8.4.20-fpm-trixie
+
+COPY --from=ffmpeg-builder /usr/local /usr/local
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr-local.conf && ldconfig
+
+RUN printf '%s\n' \
+    '#!/bin/sh' \
+    'export LD_LIBRARY_PATH=/opt/ubuntu-ffmpeg/usr-lib-x86_64-linux-gnu:/opt/ubuntu-ffmpeg/lib-x86_64-linux-gnu:/opt/ubuntu-ffmpeg/lib64' \
+    'exec /opt/ubuntu-ffmpeg/bin/ffmpeg "$@"' \
+    > /usr/local/bin/ffmpeg-ubuntu \
+ && chmod +x /usr/local/bin/ffmpeg-ubuntu \
+ && printf '%s\n' \
+    '#!/bin/sh' \
+    'export LD_LIBRARY_PATH=/opt/ubuntu-ffmpeg/usr-lib-x86_64-linux-gnu:/opt/ubuntu-ffmpeg/lib-x86_64-linux-gnu:/opt/ubuntu-ffmpeg/lib64' \
+    'exec /opt/ubuntu-ffmpeg/bin/ffprobe "$@"' \
+    > /usr/local/bin/ffprobe-ubuntu \
+ && chmod +x /usr/local/bin/ffprobe-ubuntu
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -23,23 +117,20 @@ RUN set -eux; \
     dpkg -i /tmp/packages-microsoft-prod.deb; \
     rm /tmp/packages-microsoft-prod.deb; \
     apt-get update \
-
-# gosu: run final command as www-data if needed
-
+    # gosu: run final command as www-data if needed \
     && apt-get install -y -q --no-install-recommends \
     gosu \
     cron \
     nano \
     procps \
     iputils-ping \
-    ffmpeg \
+    # ffmpeg \ # multi stage külön buildel, mert kell a 8as ffmpeg. Ha lesz 8as a base imageben, akkor az törölhető.
     rsync \
     less \
     pv \
     git \
     msmtp \
     default-mysql-client \
-    curl \
     imagemagick \
     zlib1g-dev \
     libpng-dev \
@@ -49,6 +140,30 @@ RUN set -eux; \
     libfreetype6-dev \
     libzip-dev \
     libmagickwand-dev \
+     # ffmpeg 8.1 \
+    libaom3 \
+    libass9 \
+    libdav1d7 \
+    libfontconfig1 \
+    libfreetype6 \
+    libfribidi0 \
+    libharfbuzz0b \
+    libjxl0.11 \
+    libmp3lame0 \
+    libopenjp2-7 \
+    libopus0 \
+    libssl3t64 \
+    libtheoradec1 \
+    libtheoraenc1 \
+    libvorbis0a \
+    libvorbisenc2 \
+    libvpx9 \
+    libwebp7 \
+    libx264-164 \
+    libx265-215 \
+    libxml2 \
+    libzimg2 \
+    # others \
     libxml2-dev \
     libldap-dev \
     libltdl-dev \
@@ -60,17 +175,12 @@ RUN set -eux; \
     libfcgi-bin \
     strace \
     wget \
-    # for deb-multimedia keyring
+    # for deb-multimedia keyring \
     gpgv \
     7zip
 
-# ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
-RUN echo "deb https://www.deb-multimedia.org trixie main non-free" >> /etc/apt/sources.list \
-    && wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb \
-    && dpkg -i deb-multimedia-keyring_2024.9.1_all.deb \
-    && rm deb-multimedia-keyring_2024.9.1_all.deb \
-    && apt update \
-    && apt install -y ffmpeg
+# Robust check during Docker build - This will fail the build early if something is still missing.
+RUN ldconfig && ldd /usr/local/bin/ffmpeg && ffmpeg -version
 
 # https://stackoverflow.com/questions/27931668/encoding-problems-when-running-an-app-in-docker-python-java-ruby-with-u/27931669
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean && rm -r /var/lib/apt/lists/*
