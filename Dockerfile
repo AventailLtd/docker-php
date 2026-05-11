@@ -77,7 +77,7 @@ RUN ./configure \
  && strip /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
 
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.20-fpm-trixie
+FROM php:8.5.6-fpm-trixie
 
 COPY --from=ffmpeg-builder /usr/local /usr/local
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr-local.conf && ldconfig
@@ -196,8 +196,7 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
       --with-jpeg=/usr/include/ \
       --with-webp=/usr/include/ \
      && \
-    docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install -j5 ftp iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl opcache
+    docker-php-ext-install -j5 ftp iconv pdo_mysql pdo_pgsql zip gmp mysqli gd soap exif intl sockets bcmath ldap pcntl
 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv redis imagick
 
