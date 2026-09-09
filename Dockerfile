@@ -11,6 +11,29 @@ ENV DEBIAN_FRONTEND noninteractive
 # mssql dpkg - https://github.com/microsoft/mssql-docker/issues/199
 ENV ACCEPT_EULA Y
 
+# A bullseye (és a bullseye-security) LTS 2026-08-31-én lejárt: a security pool épp ürül
+# (404-ek), a Release fájlok Valid-Until-ja lejárt -> az apt az immutable
+# archive.debian.org-ról megy, a lejárat-ellenőrzés kikapcsolva.
+RUN set -eux; \
+    printf '%s\n' \
+      'deb http://archive.debian.org/debian bullseye main' \
+      'deb http://archive.debian.org/debian bullseye-updates main' \
+      > /etc/apt/sources.list; \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
+# Friss CA store + openssl: a bullseye main-ben csak a 2021-es (129 root) ca-certificates
+# van, a 20250419-es (2025-04-i Mozilla store, 150 root) az arch-független trixie
+# csomagból jön. Az upgrade hozza az openssl 1.1.1n -> 1.1.1w-t is.
+RUN set -eux; \
+    apt-get update; \
+    apt-get upgrade -y -q; \
+    apt-get install -y -q --no-install-recommends ca-certificates; \
+    curl -fsSL https://deb.debian.org/debian/pool/main/c/ca-certificates/ca-certificates_20250419_all.deb \
+      -o /tmp/ca-certificates.deb; \
+    dpkg -i /tmp/ca-certificates.deb; \
+    rm /tmp/ca-certificates.deb; \
+    update-ca-certificates --fresh
+
 # for apt-key to work!
 RUN apt-get update && apt-get install -y -q --no-install-recommends gnupg2
 
@@ -63,7 +86,9 @@ RUN ln -s /usr/bin/msmtp /usr/sbin/sendmail
 ENV LC_ALL=en_US.UTF-8
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install redis imagick
+# Verziók pinelve: a pecl "latest" már PHP 8+-t kér és nem esik vissza kompatibilis
+# kiadásra, illetve így reprodukálható a dátumos tag.
+RUN pecl install redis-6.3.0 imagick-3.8.1
 
 # libltdl.la hiányára workaround
 #RUN ln -s /usr/lib/x86_64-linux-gnu/libltdl.so /usr/lib/x86_64-linux-gnu/libltdl.la
