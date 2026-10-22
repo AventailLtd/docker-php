@@ -1,6 +1,6 @@
 # for newest, check: https://hub.docker.com/_/php?tab=tags
 #FROM php:8.3.2-fpm-bookworm - még nem megy 2024-01-30
-FROM php:8.2.27-fpm-bookworm
+FROM php:8.2.35-fpm-bookworm
 
 # log to stdout -> TODO: to nginx too - this is not intentional, but fine for now
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.conf
@@ -68,9 +68,9 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
 
 # ffmpeg multimedia package install (https://www.deb-multimedia.org/) - for example the default ffmpeg lib is not containts zscale
 RUN echo "deb https://www.deb-multimedia.org bookworm main non-free" >> /etc/apt/sources.list \
-    && wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb \
-    && dpkg -i deb-multimedia-keyring_2016.8.1_all.deb \
-    && rm deb-multimedia-keyring_2016.8.1_all.deb \
+    && wget https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb \
+    && dpkg -i deb-multimedia-keyring_2024.9.1_all.deb \
+    && rm deb-multimedia-keyring_2024.9.1_all.deb \
     && apt update \
     && apt install -y ffmpeg
 
@@ -80,7 +80,8 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen && apt-get clean &&
 ENV LC_ALL=en_US.UTF-8
 
 # redis: https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
-RUN pecl install sqlsrv pcov pdo_sqlsrv redis imagick && rm -rf /tmp/pear
+# sqlsrv 5.13+ PHP >= 8.3-at kér
+RUN pecl install sqlsrv-5.12.0 pcov pdo_sqlsrv-5.12.0 redis imagick && rm -rf /tmp/pear
 
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h && \
     docker-php-ext-configure gd \
