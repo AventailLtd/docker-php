@@ -77,7 +77,7 @@ RUN ./configure \
  && strip /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
 
 # for newest, check: https://hub.docker.com/_/php?tab=tags
-FROM php:8.5.12-fpm-trixie
+FROM php:8.5.13-fpm-trixie
 
 COPY --from=ffmpeg-builder /usr/local /usr/local
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr-local.conf && ldconfig
@@ -175,6 +175,7 @@ RUN set -eux; \
     libfcgi-bin \
     strace \
     wget \
+    poppler-utils \
     # for deb-multimedia keyring \
     gpgv \
     7zip
